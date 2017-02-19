@@ -124,7 +124,7 @@ void MyPrimitive::GenerateCone(float a_fRadius, float a_fHeight, int a_nSubdivis
 	//0--1
 	std::vector<vector3> point;
 
-	point.push_back(vector3(0.0));
+	point.push_back(vector3(0.0, 0.0, 0.0 - a_fHeight /2));
 
 	/*vector3 point0(-fValue, -fValue, fValue); //0
 	vector3 point1(fValue, -fValue, fValue); //1
@@ -134,17 +134,29 @@ void MyPrimitive::GenerateCone(float a_fRadius, float a_fHeight, int a_nSubdivis
 	float theta = 0.0f;
 	float steps = 2 * PI / static_cast<float>(a_nSubdivisions);
 
+	//populate points
 	for (int i = 0; i < a_nSubdivisions; i++) {
-		vector3 temp(cos(theta), sin(theta), 0.0f);
+		vector3 temp(cos(theta) * a_fRadius, sin(theta) * a_fRadius, 0.0 - a_fHeight / 2);
 		point.push_back(temp);
 		theta += steps;
 	}
 
+	//draw base
 	for (int i = 1; i < a_nSubdivisions; i++) {
-		AddTri(point[0], point[i], point[i + 1]);
+		AddTri(point[0], point[i + 1], point[i]);
+		//AddTri(point[0], point[i], point[i + 1]); Swap Normals
 	}
 
-	AddTri(point[a_nSubdivisions], point[a_nSubdivisions - 2], point[a_nSubdivisions - 1]);
+	//draw last triangle of base
+	AddTri(point[0], point[1], point[a_nSubdivisions]);
+
+	//draw sides
+	vector3 highPoint(point[0].x, point[0].y, a_fHeight/2);
+
+	for (int i = 1; i < a_nSubdivisions; i++) {
+		AddTri(highPoint, point[i], point[i + 1]);
+	}
+	AddTri(highPoint, point[a_nSubdivisions], point[1]);
 
 	//AddTri(point0, point1, point2);
 
@@ -154,6 +166,13 @@ void MyPrimitive::GenerateCone(float a_fRadius, float a_fHeight, int a_nSubdivis
 }
 void MyPrimitive::GenerateCylinder(float a_fRadius, float a_fHeight, int a_nSubdivisions, vector3 a_v3Color)
 {
+	std::vector<vector3> bottomBase;
+	std::vector<vector3> topBase;
+
+	bottomBase.push_back(vector3(0.0, 0.0, 0 - a_fHeight/2));
+	topBase.push_back(vector3(0, 0, 0 + a_fHeight/2));
+
+
 	if (a_nSubdivisions < 3)
 		a_nSubdivisions = 3;
 	if (a_nSubdivisions > 360)
@@ -162,26 +181,66 @@ void MyPrimitive::GenerateCylinder(float a_fRadius, float a_fHeight, int a_nSubd
 	Release();
 	Init();
 
-	//Your code starts here
-	float fValue = 0.5f;
-	//3--2
-	//|  |
-	//0--1
-	vector3 point0(-fValue, -fValue, fValue); //0
-	vector3 point1(fValue, -fValue, fValue); //1
-	vector3 point2(fValue, fValue, fValue); //2
-	vector3 point3(-fValue, fValue, fValue); //3
+	float theta = 0.0f;
+	float steps = 2 * PI / static_cast<float>(a_nSubdivisions);
 
-	
+	//=====Bottom Base=====
+	//populate points
+	for (int i = 0; i < a_nSubdivisions; i++) {
+		vector3 temp(cos(theta) * a_fRadius, sin(theta) * a_fRadius, 0 - a_fHeight/2);
+		bottomBase.push_back(temp);
+		theta += steps;
+	}
 
+	//draw base
+	for (int i = 1; i < a_nSubdivisions; i++) {
+		AddTri(bottomBase[0], bottomBase[i + 1], bottomBase[i]);
+		//AddTri(point[0], point[i], point[i + 1]); Swap Normals
+	}
+	//draw last triangle of base
 
-	AddQuad(point0, point1, point3, point2);
+	AddTri(bottomBase[0], bottomBase[1], bottomBase[a_nSubdivisions]);
+	//=====Bottom Base END=====
+
+	//=====Top Base=====
+
+	//reset theta
+	theta = 0;
+
+	//populate points
+	for (int i = 0; i < a_nSubdivisions; i++) {
+		vector3 temp(cos(theta) * a_fRadius, sin(theta) * a_fRadius, 0 + a_fHeight/2);
+		topBase.push_back(temp);
+		theta += steps;
+	}
+
+	//draw base
+	for (int i = 1; i < a_nSubdivisions; i++) {
+		AddTri(topBase[0], topBase[i], topBase[i + 1]);
+		//AddTri(point[0], point[i], point[i + 1]); Swap Normals
+	}
+	//draw last triangle of base
+
+	AddTri(topBase[0], topBase[a_nSubdivisions], topBase[1]);
+	//=====Bottom Base END=====
+
+	//=====Draw Sides=====
+	for (int i = 0; i < a_nSubdivisions; i++) {
+		AddQuad(bottomBase[i], bottomBase[i + 1], topBase[i], topBase[i + 1]);
+	}
+	AddQuad(bottomBase[a_nSubdivisions], bottomBase[1], topBase[a_nSubdivisions], topBase[1]);
+	//=====Draw Sides End=====
 
 	//Your code ends here
 	CompileObject(a_v3Color);
 }
 void MyPrimitive::GenerateTube(float a_fOuterRadius, float a_fInnerRadius, float a_fHeight, int a_nSubdivisions, vector3 a_v3Color)
 {
+	std::vector<vector3> topInner;
+	std::vector<vector3> topOuter;
+	std::vector<vector3> bottomOuter;
+	std::vector<vector3> BottomInner;
+
 	if (a_nSubdivisions < 3)
 		a_nSubdivisions = 3;
 	if (a_nSubdivisions > 360)
@@ -190,17 +249,20 @@ void MyPrimitive::GenerateTube(float a_fOuterRadius, float a_fInnerRadius, float
 	Release();
 	Init();
 
-	//Your code starts here
-	float fValue = 0.5f;
-	//3--2
-	//|  |
-	//0--1
-	vector3 point0(-fValue, -fValue, fValue); //0
-	vector3 point1(fValue, -fValue, fValue); //1
-	vector3 point2(fValue, fValue, fValue); //2
-	vector3 point3(-fValue, fValue, fValue); //3
 
-	AddQuad(point0, point1, point3, point2);
+	float theta = 0.0f;
+	float steps = 2 * PI / static_cast<float>(a_nSubdivisions);
+
+	//populate topInner
+	for (int i = 0; i < a_nSubdivisions; i++) {
+		vector3 temp(cos(theta), sin(theta), 0 - a_fHeight / 2);
+		topInner.push_back(temp);
+		theta += steps;
+	}
+
+	theta = 0.0f;
+
+//	AddQuad(point0, point1, point3, point2);
 
 	//Your code ends here
 	CompileObject(a_v3Color);
