@@ -253,16 +253,47 @@ void MyPrimitive::GenerateTube(float a_fOuterRadius, float a_fInnerRadius, float
 	float theta = 0.0f;
 	float steps = 2 * PI / static_cast<float>(a_nSubdivisions);
 
-	//populate topInner
+	//populate top
 	for (int i = 0; i < a_nSubdivisions; i++) {
-		vector3 temp(cos(theta), sin(theta), 0 - a_fHeight / 2);
+		vector3 temp(cos(theta) * a_fInnerRadius, sin(theta) * a_fInnerRadius, a_fHeight / 2);
+		vector3 temp2(cos(theta) * a_fOuterRadius, sin(theta) * a_fOuterRadius, a_fHeight / 2);
 		topInner.push_back(temp);
+		topOuter.push_back(temp2);
+		theta += steps;
+	}
+	theta = 0.0f;
+	//populate bottom
+	for (int i = 0; i < a_nSubdivisions; i++) {
+		vector3 temp(cos(theta) * a_fInnerRadius, sin(theta) * a_fInnerRadius, 0 - a_fHeight / 2);
+		vector3 temp2(cos(theta) * a_fOuterRadius, sin(theta) * a_fOuterRadius, 0 - a_fHeight / 2);
+		BottomInner.push_back(temp);
+		bottomOuter.push_back(temp2);
 		theta += steps;
 	}
 
-	theta = 0.0f;
+	//draw top
+	for (int i = 0; i < a_nSubdivisions -1; i++) {
+		AddQuad(topInner[i + 1], topInner[i], topOuter[i + 1], topOuter[i]);
+	}
+	AddQuad(topInner[0], topInner[a_nSubdivisions - 1], topOuter[0], topOuter[a_nSubdivisions - 1]);
 
-//	AddQuad(point0, point1, point3, point2);
+	//draw bottom
+	for (int i = 0; i < a_nSubdivisions - 1; i++) {
+		AddQuad(BottomInner[i], BottomInner[i + 1], bottomOuter[i], bottomOuter[i + 1]);
+	}
+	AddQuad(BottomInner[a_nSubdivisions - 1], BottomInner[0], bottomOuter[a_nSubdivisions - 1], bottomOuter[0]);
+
+	//draw inner side
+	for (int i = 0; i < a_nSubdivisions - 1; i++) {
+		AddQuad(BottomInner[i + 1], BottomInner[i], topInner[i + 1], topInner[i]);
+	}
+	AddQuad(BottomInner[0], BottomInner[a_nSubdivisions - 1], topInner[0], topInner[a_nSubdivisions - 1]);
+
+	//draw outter side
+	for (int i = 0; i < a_nSubdivisions - 1; i++) {
+		AddQuad(bottomOuter[i], bottomOuter[i + 1], topOuter[i], topOuter[i + 1]);
+	}
+	AddQuad(bottomOuter[a_nSubdivisions - 1], bottomOuter[0], topOuter[a_nSubdivisions - 1], topOuter[0]);
 
 	//Your code ends here
 	CompileObject(a_v3Color);
@@ -302,20 +333,61 @@ void MyPrimitive::GenerateTorus(float a_fOuterRadius, float a_fInnerRadius, int 
 }
 void MyPrimitive::GenerateSphere(float a_fRadius, int a_nSubdivisions, vector3 a_v3Color)
 {
+	std::vector<vector3> points;
+
 	//Sets minimum and maximum of subdivisions
 	if (a_nSubdivisions < 1)
 	{
 		GenerateCube(a_fRadius * 2, a_v3Color);
 		return;
 	}
-	if (a_nSubdivisions > 6)
-		a_nSubdivisions = 6;
+/*	if (a_nSubdivisions > 6)
+		a_nSubdivisions = 6;*/
 
 	Release();
 	Init();
 
 	//Your code starts here
-	float fValue = 0.5f;
+
+	float theta = 0.0f;
+	float steps = 2 * PI / static_cast<float>(a_nSubdivisions);
+	float phiSteps = PI / static_cast<float>(a_nSubdivisions);
+	float phi = 0.0f;
+
+	for (int i = 0; i < a_nSubdivisions; i++) {
+		vector3 temp(a_fRadius * cos(theta) * sin(phi), a_fRadius * sin(theta) * sin(phi), a_fRadius * cos(phi));
+		points.push_back(temp);
+		theta += steps;
+		phi += phiSteps;
+	}
+
+	//generate points
+	/*float startU = 0.0f;
+	float startV = 0.0f;
+	float endU = PI * 2;
+	float endV = PI;
+	float stepU = (endU - startU) / (a_fRadius / 2);
+	float stepV = (endV - startV) / (a_fRadius / 2);
+	
+	for (int i = 0; i < a_nSubdivisions; i++) {
+		for (int j = 0; j < a_nSubdivisions; i++) {
+			float u = i * stepU + startU;
+			float v = j * stepV + startV;
+			float un = (i + 1) * stepU + startU;
+			float vn = (j + 1) * stepV + startV;
+
+
+		}
+	}*/
+
+	for (int i = 0; i < a_nSubdivisions - 3; i++) {
+	AddQuad(points[i], points[i + 1], points[i + 2], points[i + 3]);
+	}
+/*	AddQuad(points[a_nSubdivisions - 1], points[a_nSubdivisions - 2], points[a_nSubdivisions - 3], points[0]);
+	AddQuad(points[a_nSubdivisions - 2], points[a_nSubdivisions - 3], points[0], points[1]);
+	AddQuad(points[a_nSubdivisions - 3], points[0], points[1], points[2]);*/
+
+	/*float fValue = 0.5f;
 	//3--2
 	//|  |
 	//0--1
@@ -324,7 +396,7 @@ void MyPrimitive::GenerateSphere(float a_fRadius, int a_nSubdivisions, vector3 a
 	vector3 point2(fValue, fValue, fValue); //2
 	vector3 point3(-fValue, fValue, fValue); //3
 
-	AddQuad(point0, point1, point3, point2);
+	AddQuad(point0, point1, point3, point2);*/
 
 	//Your code ends here
 	CompileObject(a_v3Color);
