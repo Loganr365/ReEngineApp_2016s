@@ -383,7 +383,7 @@ void MyPrimitive::GenerateSphere(float a_fRadius, int a_nSubdivisions, vector3 a
 	for (int i = 0; i < a_nSubdivisions - 3; i++) {
 	AddQuad(points[i], points[i + 1], points[i + 2], points[i + 3]);
 	}
-/*	AddQuad(points[a_nSubdivisions - 1], points[a_nSubdivisions - 2], points[a_nSubdivisions - 3], points[0]);
+	/*AddQuad(points[a_nSubdivisions - 1], points[a_nSubdivisions - 2], points[a_nSubdivisions - 3], points[0]);
 	AddQuad(points[a_nSubdivisions - 2], points[a_nSubdivisions - 3], points[0], points[1]);
 	AddQuad(points[a_nSubdivisions - 3], points[0], points[1], points[2]);*/
 
