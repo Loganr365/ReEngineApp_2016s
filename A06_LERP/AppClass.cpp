@@ -36,7 +36,7 @@ void AppClass::Update(void)
 #pragma endregion
 
 #pragma region Your Code goes here
-	m_pMeshMngr->SetModelMatrix(IDENTITY_M4, "WallEye");
+	//m_pMeshMngr->SetModelMatrix(IDENTITY_M4, "WallEye");
 #pragma endregion
 
 #pragma region Does not need changes but feel free to change anything here
@@ -47,10 +47,23 @@ void AppClass::Update(void)
 	int nFPS = m_pSystem->GetFPS();
 
 	//Print info on the screen
+	static DWORD startTimeSystem = GetTickCount();
+	DWORD timeApplication = GetTickCount() - startTimeSystem;
+	float timer = timeApplication / 1000.0f;
+
 	m_pMeshMngr->PrintLine("");
 	m_pMeshMngr->PrintLine(m_pSystem->GetAppName(), REYELLOW);
+	m_pMeshMngr->PrintLine("Time is: " + std::to_string(timer));
 	m_pMeshMngr->Print("FPS:");
 	m_pMeshMngr->Print(std::to_string(nFPS), RERED);
+
+	matrix4 m4WallEye;
+	float timerMapped = MapValue(timer, 0.0f, 5.0f, 0.0f, 1.0f);
+	if (timerMapped > 1.0f) { timerMapped = 1.0f; }
+	vector3 v3Lerp = glm::lerp(vector3(0, 0, 0), vector3(1, 0, 0), timerMapped);
+	//m4WallEye = glm::translate(vector3(1.0f, 0.0f, 0.0f));
+	m4WallEye = glm::translate(v3Lerp);
+	m_pMeshMngr->SetModelMatrix(m4WallEye, "WallEye");
 #pragma endregion
 }
 
