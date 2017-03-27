@@ -1,4 +1,5 @@
 #include "AppClass.h"
+#include <math.h> 
 void AppClass::InitWindow(String a_sWindowName)
 {
 	super::InitWindow("SLERP - YOUR USER NAME GOES HERE"); // Window Name
@@ -39,18 +40,87 @@ void AppClass::Update(void)
 	//Getting the time between calls
 	double fCallTime = m_pSystem->LapClock();
 	//Counting the cumulative time
-	static double fRunTime = 0.0f;
+	static float fRunTime = 0.0f;
 	fRunTime += fCallTime;
 
-	//Earth Orbit
-	double fEarthHalfOrbTime = 182.5f * m_fDay; //Earths orbit around the sun lasts 365 days / half the time for 2 stops
+	/*
+	//Create the quaternions to interpolate
+	glm::quat q1 = glm::angleAxis(0.0f, vector3(0.0f, 0.0f, 1.0f));
+	quaternion q2 = glm::angleAxis(359.0f, vector3(0.0f, 0.0f, 1.0f)); //if 360 there is a div by 0 somewhere
+	quaternion q3;
+	
+	static float fTimer = 0.0f; //static timer to keep track
+	static int clockIndex = m_pSystem->GenClock();//generate a new clock in the system
+	fTimer += m_pSystem->LapClock(clockIndex);//get the delta time of that clock
+
+	float fCycleTime = 5.0f;// time the animation will take to perform
+	float fPercentage = MapValue(fTimer, 0.0f, fCycleTime, 0.0f, 1.0f); //map the value in a percentage scale
+
+	q3 = glm::mix(q1, q2, fPercentage); //slerp the quaternions
+	
+	m_pMeshMngr->SetModelMatrix(ToMatrix4(q3), "Cow");//transform the quaternion to a matrix and assign it to the model*/
+
+
+	float fEarthHalfOrbTime = 182.5f * m_fDay; //Earths orbit around the sun lasts 365 days / half the time for 2 stops
 	float fEarthHalfRevTime = 0.5f * m_fDay; // Move for Half a day
 	float fMoonHalfOrbTime = 14.0f * m_fDay; //Moon's orbit is 28 earth days, so half the time for half a route
+	float earthRotationTime = 1.0f;
+
+	//Earth Orbit
+	matrix4 distanceEarth = glm::translate(11.0f, 0.0f, 0.0f);
+	matrix4 distanceMoon = glm::translate(2.0f, 0.0f, 0.0f);
+	matrix4 earthScale = glm::scale(0.524f, 0.524f, 0.524f);
+	matrix4 moonScale = glm::scale(0.27f, 0.27f, 0.27f);
+	matrix4 sunScale = glm::scale(5.936f, 5.936f, 5.936f);
+
+	matrix4 earthMatrix = matrix4(IDENTITY_M4);
+	quaternion earthStartOrbit = glm::angleAxis(0.0f, vector3(0.0f, 0.0f, 1.0f));
+	quaternion earthEndOrbit = glm::angleAxis(359.0f, vector3(0.0f, 0.0f, 1.0f)); //if 360 there is a div by 0 somewhere
+	quaternion earthStartRotation = glm::angleAxis(0.0f, vector3(0.0f, 0.0f, 1.0f));
+	quaternion earthEndRotation = glm::angleAxis(359.0f, vector3(0.0f, 0.0f, 1.0f)); 
+
+	static int earthClockIndex = m_pSystem->GenClock();//generate a new clock in the system
+	static float earthTimer = 0.0f; //static timer to keep track
+	earthTimer += m_pSystem->LapClock(earthClockIndex);//get the delta time of that clock
+
+	float orbitPercent = MapValue(earthTimer, 0.0f, fEarthHalfOrbTime * 2, 0.0f, 1.0f); //map the value in a percentage scale
+	float rotationPercent = MapValue(earthTimer, 0.0f, 1.0f, 0.0f, 1.0f); //map the value in a percentage scale
+	quaternion earthOrbitMaped = glm::mix(earthStartOrbit, earthEndOrbit, orbitPercent); //slerp the quaternions
+	quaternion earthRotationMaped = glm::mix(earthStartRotation, earthEndRotation, rotationPercent); //slerp the quaternions
+
+	earthMatrix *= ToMatrix4(earthOrbitMaped);
+	earthMatrix *= distanceEarth;
+	earthMatrix *= ToMatrix4(earthRotationMaped);
+
+	//earthMatrix *= earthMaped;
+
+	//Moon Orbit
+	matrix4 moonMatrix = matrix4(IDENTITY_M4);
+
+	quaternion moonStartOrbit = glm::angleAxis(0.0f, vector3(0.0f, 0.0f, 1.0f));
+	quaternion moonEndOrbit = glm::angleAxis(359.0f, vector3(0.0f, 0.0f, 1.0f)); //if 360 there is a div by 0 somewhere
+	quaternion moonStartRotation = glm::angleAxis(0.0f, vector3(0.0f, 0.0f, 1.0f));
+	quaternion moonEndRotation = glm::angleAxis(359.0f, vector3(0.0f, 0.0f, 1.0f));
+	float moonOrbitPercent = MapValue(earthTimer, 0.0f, fMoonHalfOrbTime * 2, 0.0f, 1.0f); //map the value in a percentage scale
+	quaternion moonOrbitMaped = glm::mix(moonStartOrbit, moonEndOrbit, moonOrbitPercent); //slerp the quaternions
+
+	//moonMatrix *= earthMatrix;
+	moonMatrix *= earthMatrix;
+	moonMatrix *= ToMatrix4(moonOrbitMaped);
+	moonMatrix *= distanceMoon;
+	moonMatrix *= moonScale;
+
+	matrix4 sunMatrix = matrix4(IDENTITY_M4);
+	
+	sunMatrix = sunScale;
 
 	//Setting the matrices
-	m_pMeshMngr->SetModelMatrix(IDENTITY_M4, "Sun");
-	m_pMeshMngr->SetModelMatrix(IDENTITY_M4, "Earth");
-	m_pMeshMngr->SetModelMatrix(IDENTITY_M4, "Moon");
+	m_pMeshMngr->SetModelMatrix(sunMatrix, "Sun");
+	m_pMeshMngr->SetModelMatrix(earthMatrix, "Earth");
+	m_pMeshMngr->SetModelMatrix(moonMatrix, "Moon");
+
+
+	
 
 	//Adds all loaded instance to the render list
 	m_pMeshMngr->AddInstanceToRenderList("ALL");
@@ -58,6 +128,11 @@ void AppClass::Update(void)
 	static int nEarthOrbits = 0;
 	static int nEarthRevolutions = 0;
 	static int nMoonOrbits = 0;
+
+	//calculate rotation info
+	nEarthOrbits = orbitPercent;
+	nEarthRevolutions = rotationPercent;
+	nMoonOrbits = moonOrbitPercent;
 
 	//Indicate the FPS
 	int nFPS = m_pSystem->GetFPS();
@@ -106,8 +181,9 @@ void AppClass::Display(void)
 	}
 	
 	m_pMeshMngr->Render(); //renders the render list
-
+	m_pMeshMngr->ClearRenderList(); //Reset the Render list after render
 	m_pGLSystem->GLSwapBuffers(); //Swaps the OpenGL buffers
+
 }
 
 void AppClass::Release(void)
