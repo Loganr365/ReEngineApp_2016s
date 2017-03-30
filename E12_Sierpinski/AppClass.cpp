@@ -13,18 +13,77 @@ void AppClass::InitVariables(void)
 	m_pMesh = new MyMesh();
 	
 	//Creating the Mesh points
+	//top
+	m_pMesh->AddVertexPosition(vector3(0.5f, 0.0f, 0.0f));
+	m_pMesh->AddVertexColor(RERED);
+	m_pMesh->AddVertexPosition(vector3(0.0f, 1.0f, 0.0f));
+	m_pMesh->AddVertexColor(REBLUE);
+	m_pMesh->AddVertexPosition(vector3(-0.5f,  0.0f, 0.0f));
+	m_pMesh->AddVertexColor(RERED);
+
+	//2nd left
+	m_pMesh->AddVertexPosition(vector3(0.0f, -1.0f, 0.0f));
+	m_pMesh->AddVertexColor(RERED);
+	m_pMesh->AddVertexPosition(vector3(-0.5f,  0.0f, 0.0f));
+	m_pMesh->AddVertexColor(REBLUE);
 	m_pMesh->AddVertexPosition(vector3(-1.0f, -1.0f, 0.0f));
 	m_pMesh->AddVertexColor(RERED);
-	m_pMesh->AddVertexPosition(vector3( 1.0f, -1.0f, 0.0f));
+
+	//2nd right
+	m_pMesh->AddVertexPosition(vector3(1.0f, -1.0f, 0.0f));
 	m_pMesh->AddVertexColor(RERED);
-	m_pMesh->AddVertexPosition(vector3(-1.0f,  1.0f, 0.0f));
-	m_pMesh->AddVertexColor(RERED);
-	m_pMesh->AddVertexPosition(vector3(-1.0f,  1.0f, 0.0f));
+	m_pMesh->AddVertexPosition(vector3(0.5f, 0.0f, 0.0f));
 	m_pMesh->AddVertexColor(REBLUE);
+	m_pMesh->AddVertexPosition(vector3(0.0f, -1.0f, 0.0f));
+	m_pMesh->AddVertexColor(RERED);
+
+	//3rd left
+	m_pMesh->AddVertexPosition(vector3(-0.5f, -2.0f, 0.0f));
+	m_pMesh->AddVertexColor(RERED);
+	m_pMesh->AddVertexPosition(vector3(-1.0f, -1.0f, 0.0f));
+	m_pMesh->AddVertexColor(REBLUE);
+	m_pMesh->AddVertexPosition(vector3(-1.5f, -2.0f, 0.0f));
+	m_pMesh->AddVertexColor(RERED);
+
+	//3rd right
+	m_pMesh->AddVertexPosition(vector3(1.5f, -2.0f, 0.0f));
+	m_pMesh->AddVertexColor(RERED);
 	m_pMesh->AddVertexPosition(vector3(1.0f, -1.0f, 0.0f));
 	m_pMesh->AddVertexColor(REBLUE);
-	m_pMesh->AddVertexPosition(vector3( 1.0f, 1.0f, 0.0f));
+	m_pMesh->AddVertexPosition(vector3(0.5f, -2.0f, 0.0f));
+	m_pMesh->AddVertexColor(RERED);
+
+	//4th left
+	m_pMesh->AddVertexPosition(vector3(-1.0f, -3.0f, 0.0f));
+	m_pMesh->AddVertexColor(RERED);
+	m_pMesh->AddVertexPosition(vector3(-1.5f, -2.0f, 0.0f));
 	m_pMesh->AddVertexColor(REBLUE);
+	m_pMesh->AddVertexPosition(vector3(-2.0f, -3.0f, 0.0f));
+	m_pMesh->AddVertexColor(RERED);
+
+	//4th mid left
+	m_pMesh->AddVertexPosition(vector3(0.0f, -3.0f, 0.0f));
+	m_pMesh->AddVertexColor(RERED);
+	m_pMesh->AddVertexPosition(vector3(-0.5f, -2.0f, 0.0f));
+	m_pMesh->AddVertexColor(REBLUE);
+	m_pMesh->AddVertexPosition(vector3(-1.0f, -3.0f, 0.0f));
+	m_pMesh->AddVertexColor(RERED);
+
+	//4th mid right
+	m_pMesh->AddVertexPosition(vector3(1.0f, -3.0f, 0.0f));
+	m_pMesh->AddVertexColor(RERED);
+	m_pMesh->AddVertexPosition(vector3(0.5f, -2.0f, 0.0f));
+	m_pMesh->AddVertexColor(REBLUE);
+	m_pMesh->AddVertexPosition(vector3(0.0f, -3.0f, 0.0f));
+	m_pMesh->AddVertexColor(RERED);
+
+	//4th right
+	m_pMesh->AddVertexPosition(vector3(2.0f, -3.0f, 0.0f));
+	m_pMesh->AddVertexColor(RERED);
+	m_pMesh->AddVertexPosition(vector3(1.5f, -2.0f, 0.0f));
+	m_pMesh->AddVertexColor(REBLUE);
+	m_pMesh->AddVertexPosition(vector3(1.0f, -3.0f, 0.0f));
+	m_pMesh->AddVertexColor(RERED);
 
 	//Compiling the mesh
 	m_pMesh->CompileOpenGL3X();
