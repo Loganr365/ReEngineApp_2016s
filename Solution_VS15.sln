@@ -83,7 +83,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Ex01_B", "Ex01_B\Ex01_B.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "W9R_BoundingSphereDEMO", "W9R_BoundingSphereDEMO\W9R_BoundingSphereDEMO.vcxproj", "{625922B3-FF5F-49AF-84A3-8E4BAD5B8DC4}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "A08", "\\banner.main.ad.rit.edu\students\ltr6702\IGMProfile\Documents\ReEngineApp_2016s\A08\A08.vcxproj", "{635F6252-1CFD-402C-A66D-775610C6220F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "A08", "A08 - Final\A08.vcxproj", "{635F6252-1CFD-402C-A66D-775610C6220F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
