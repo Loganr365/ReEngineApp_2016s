@@ -31,27 +31,32 @@ namespace {
 			perspective = glm::perspective(45.0f, 1080.0f / 768.0f, 0.01f, 1000.0f);
 			camLocation = IDENTITY_M4;
 			v3_Eye = glm::vec3(0.0f, 0.0f, 15.0f); //default eye position 15 units on the Z axis  
-			v3_Target = glm::vec3(0.0f, 0.0f, 14.0f);
+			v3_Target = glm::vec3(0.0f, 0.0f, 0.0f);
 			v3_Up = glm::vec3(0.0f, 1.0f, 0.0f); //default up in the Y direction
 			locationX = 0.0f;
 			locationY = 0.0f;
 			locationZ = 0.0f;
+			orthoPerspective = glm::ortho(-10.0f, 10.0f, -5.0f, 5.0f, 0.01f, 1000.0f);
 		};
 
 		~Camera() {};
 
 		matrix4 GetView(void) {
-			return glm::lookAt(v3_Eye, v3_Target, v3_Up) * (ToMatrix4(RotationX) * ToMatrix4(RotationY) * ToMatrix4(RotationZ));
+			return getRotation() * camLocation * glm::lookAt(v3_Eye, v3_Target, v3_Up);
 		};
 
 		matrix4 getProjection(bool bOrthographic) {
-			return perspective * camLocation;
+			if (!bOrthographic) {
+				return perspective;
+			}
+			else
+				return orthoPerspective;
 		};
 
-	/*	matrix4 getRotation() {
-			quaternion rot = quaternion(vector3(rotationX, rotationY, rotationZ));
+		matrix4 getRotation() {
+			quaternion rot = quaternion(vector3(xAngle, yAngle, zAngle));
 			return ToMatrix4(rot);
-		}*/
+		}
 
 		void ChangePitch(float fIncrement) {
 		    xAngle += fIncrement;
@@ -88,32 +93,33 @@ namespace {
 		//NOTE I'm not sure that we have to change the eye and target vectors when moving the camera.  This only really changes the line of site, not the location in space
 
 		void MoveForward(float fIncrement) {
-			v3_Eye.z += fIncrement;
-			v3_Target.z += fIncrement;
-			//camLocation += glm::translate(vector3(0.0f, 0.0f, fIncrement));
-		//	locationZ += fIncrement;
-		//	camLocation = glm::translate(vector3(locationX, locationY, locationZ));
+		//	v3_Eye.z += fIncrement;
+			//v3_Target.z += fIncrement;
+		//	camLocation += glm::translate(vector3(0.0f, 0.0f, fIncrement));
+			locationZ += fIncrement;
+			camLocation = glm::translate(vector3(locationX, locationY, locationZ));
 		};
 
 		void MoveSideways(float fIncrement) {
-			v3_Eye.x += fIncrement;
-			v3_Target.x += fIncrement;
-			//camLocation += glm::translate(vector3(fIncrement, 0.0f, 0.0f));
-			//locationX += fIncrement;
-			//camLocation = glm::translate(vector3(locationX, locationY, locationZ));
+			//v3_Eye.x += fIncrement;
+			//v3_Target.x += fIncrement;
+		//	camLocation += glm::translate(vector3(fIncrement, 0.0f, 0.0f));
+			locationX += fIncrement;
+			camLocation = glm::translate(vector3(locationX, locationY, locationZ));
 		};
 
 		void MoveVertical(float fIncrement) {
-			v3_Eye.y += fIncrement;
-			v3_Target.y += fIncrement;
+			//v3_Eye.y += fIncrement;
+		//	v3_Target.y += fIncrement;
 			//camLocation += glm::translate(vector3(0.0f, fIncrement, 0.0f));
-			//locationY += fIncrement;
-			//camLocation = glm::translate(vector3(locationX, locationY, locationZ));
+			locationY += fIncrement;
+			camLocation = glm::translate(vector3(locationX, locationY, locationZ));
 		};
 
 	private:
 		matrix4 perspective;
 		matrix4 camLocation;
+		matrix4 orthoPerspective;
 		float locationX;
 		float locationY;
 		float locationZ;
