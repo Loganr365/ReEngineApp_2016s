@@ -2,6 +2,7 @@
 void AppClass::ProcessKeyboard(void)
 {
 	const float CAM_SPEED = 0.1f;
+	const float ROT_SPEED = 0.01f;
 	//Flag for the modifier
 	bool bModifier = false;
 
@@ -56,7 +57,7 @@ void AppClass::ProcessKeyboard(void)
 	*/
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-	theCam->MoveForward(-CAM_SPEED);
+	theCam->MoveForward(CAM_SPEED);
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
@@ -64,7 +65,7 @@ void AppClass::ProcessKeyboard(void)
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-		theCam->MoveForward(CAM_SPEED);
+		theCam->MoveForward(-CAM_SPEED);
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
@@ -80,27 +81,27 @@ void AppClass::ProcessKeyboard(void)
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-		theCam->ChangePitch(CAM_SPEED);
+		theCam->ChangePitch(ROT_SPEED);
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-		theCam->ChangePitch(-CAM_SPEED);
+		theCam->ChangePitch(-ROT_SPEED);
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-		theCam->ChangeRoll(CAM_SPEED);
+		theCam->ChangeRoll(ROT_SPEED);
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-		theCam->ChangeRoll(-CAM_SPEED);
+		theCam->ChangeRoll(-ROT_SPEED);
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
-		theCam->ChangeYaw(CAM_SPEED);
+		theCam->ChangeYaw(ROT_SPEED);
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::RControl)) {
-		theCam->ChangeYaw(-CAM_SPEED);
+		theCam->ChangeYaw(-ROT_SPEED);
 	}
 
 	//Exit the program
