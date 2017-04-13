@@ -65,6 +65,7 @@ void AppClass::Update(void)
 	static bool completed = false;
 
 	//Print info on the screen
+<<<<<<< HEAD
 	static DWORD startTimeSystem = GetTickCount();
 	static int currentPoint = 0;
 	DWORD timeApplication = GetTickCount() - startTimeSystem;
@@ -78,6 +79,9 @@ void AppClass::Update(void)
 	}
 
 	m_pMeshMngr->PrintLine("");
+=======
+	m_pMeshMngr->PrintLine("");//Add a line on top
+>>>>>>> 53d98d80ff1895dbe81dd532db734594399fa723
 	m_pMeshMngr->PrintLine(m_pSystem->GetAppName(), REYELLOW);
 	m_pMeshMngr->PrintLine("Time is: " + std::to_string(timer));
 	m_pMeshMngr->Print("FPS:");
