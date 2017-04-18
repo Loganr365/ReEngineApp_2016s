@@ -66,10 +66,10 @@ void AppClass::Display(void)
 	m_pMeshMngr->AddGridToRenderList(1.0f, REAXIS::XY);
 
 	//Render the cone
-	m_pCone->Render(theCam->getProjection(true), theCam->GetView(), IDENTITY_M4);
+	m_pCone->Render(theCam->getProjection(false), theCam->GetView(), IDENTITY_M4);
 
 	//Render the cylinder
-	m_pCylinder->Render(theCam->getProjection(true), theCam->GetView(), glm::translate(IDENTITY_M4, REAXISZ * -3.0f));
+	m_pCylinder->Render(theCam->getProjection(false), theCam->GetView(), glm::translate(IDENTITY_M4, REAXISZ * -3.0f));
 
 	m_pMeshMngr->Render(); //renders the render list
 	m_pMeshMngr->ClearRenderList(); //Reset the Render list after render
