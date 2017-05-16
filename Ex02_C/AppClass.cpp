@@ -20,12 +20,20 @@ void AppClass::InitVariables(void)
 void AppClass::UpdateOrientation(void)
 {
 	static vector3 v3Orientation;
+
+
+	quaternion q1x = glm::angleAxis(v3Orientation.x, vector3(1.0f, 0.0f, 0.0f)); //quaternion 1
+	quaternion q1y = glm::angleAxis(v3Orientation.y, vector3(0.0f, 1.0f, 0.0f)); //quaternion 2
+	quaternion q1z = glm::angleAxis(v3Orientation.z, vector3(0.0f, 0.0f, 1.0f)); //quaternion 1
 	
-	m_m4Orientation = glm::rotate(IDENTITY_M4, v3Orientation.x, REAXISX);
-	m_m4Orientation = glm::rotate(m_m4Orientation, v3Orientation.y, REAXISY);
-	m_m4Orientation = glm::rotate(m_m4Orientation, v3Orientation.z, REAXISZ);
-	
-	m_m4Orientation = m_m4Orientation * ToMatrix4(quaternion(vector3(glm::radians(1.0f), glm::radians(1.0f), glm::radians(1.0f))));
+	//m_m4Orientation = glm::rotate(IDENTITY_M4, v3Orientation.x, REAXISX);
+	//m_m4Orientation = glm::rotate(m_m4Orientation, v3Orientation.y, REAXISY);
+	//m_m4Orientation = glm::rotate(m_m4Orientation, v3Orientation.z, REAXISZ);
+
+	/*modelMatrix = glm::translate(glm::lerp(v3Start, v3End, fPercentage)) *
+		ToMatrix4(glm::mix(q1, q2, fPercentage * 2.0f)); //translate then rotate*/
+	m_m4Orientation = ToMatrix4(q1x + q1y + q1z);
+	//m_m4Orientation = m_m4Orientation * ToMatrix4(quaternion(vector3(glm::radians(1.0f), glm::radians(1.0f), glm::radians(1.0f))));
 	v3Orientation += vector3(1.0f);
 }
 
